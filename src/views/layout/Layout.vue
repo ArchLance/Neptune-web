@@ -28,12 +28,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { useSettingStore } from "@/store/models/setting";
-
-const SettingStore = useSettingStore()
-// 是否折叠
-const isCollapse = computed(() => !SettingStore.isCollapse)
 // 引入左侧菜单栏自定义组件
 import AsideMenu from '@/views/layout/aside/Aside.vue';
 import CollapseButton from './aside/CollapseButton.vue';
