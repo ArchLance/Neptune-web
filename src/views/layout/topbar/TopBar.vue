@@ -11,7 +11,7 @@
                     <el-avatar :size=34 src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
                     <!-- 得用import才能让其识别出相对路径 -->
                     <!-- <el-avatar :size=34 src="@/assets/logo.png" /> -->
-                    张子涵
+                    {{ userStore.userInfo.username }}
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
@@ -28,6 +28,8 @@
 
 <script setup lang="ts">
 import Hamburger from './Hamburger.vue';
+import { useUserStore } from '@/store/models/user'
+const userStore = useUserStore();
 function handleCommand(command: any) {
     console.log(`Selected command: ${command}`);
     switch (command) {

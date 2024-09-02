@@ -1,7 +1,7 @@
 import request from '../request'
 export function loginApi(data: object) {
     return request({
-        url: 'login',
+        url: 'user/login',
         method: 'post',
         data
     })

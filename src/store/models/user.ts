@@ -4,7 +4,9 @@ import { ref } from 'vue'
 export const useUserStore = defineStore('userState', () => {
     const token = ref('')
     const userInfo = ref({
+        userid: '',
         username: '',
+        account: '',
         email: '',
         role: ''
     })
