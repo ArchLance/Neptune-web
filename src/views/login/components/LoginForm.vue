@@ -59,6 +59,7 @@ const showPwd = () => {
 }
 
 const userStore = useUserStore()
+// TODO: 应该把用户数据加到localstorage中
 const submitForm = (formEl: FormInstance | undefined) => {
     console.log("提交表单")
     if (!formEl) return
@@ -66,36 +67,48 @@ const submitForm = (formEl: FormInstance | undefined) => {
         if (valid) {
             loading.value = true
             // 登录
-            // TODO: 应该捕捉超时错误并是的loading设置为false
-            const { data } = await loginApi({ ...ruleForm });
-            // TODO 这里应该设置定时器超时就返回失败
-            if (data.code === 0) {
-                // 设置token
-                userStore.setToken(data.data.token)
-                userStore.setUserInfo({
-                    userid: data.data.userid,
-                    username: data.data.username,
-                    account: data.data.account,
-                    email: data.data.email,
-                    role: data.data.role
-                })
-                await router.push({
-                    path: '/index',
-                })
+            try {
+                const { data } = await loginApi({ ...ruleForm })
+                console.log(data)
+                if (data.code === 0) {
+                    // 设置token
+                    userStore.setToken(data.data.token)
+                    userStore.setUserInfo({
+                        userid: data.data.userid,
+                        username: data.data.username,
+                        account: data.data.account,
+                        email: data.data.email,
+                        role: data.data.role
+                    })
+                    await router.push({
+                        path: '/index',
+                    })
+                    ElNotification({
+                        title: '登录成功',
+                        message: "欢迎登录Neptune",
+
+
+                        type: "success",
+                        duration: 3000
+                    })
+                } else {
+                    ElNotification({
+                        title: '温馨提示',
+                        message: data.msg,
+                        type: "error",
+                        duration: 3000
+                    });
+                    loading.value = false
+                }
+            } catch (err: any) {
+                // 捕获loginApi中抛出的任何错误，包括超时  
                 ElNotification({
-                    title: '登录成功',
-                    message: "欢迎登录Neptune",
-                    type: "success",
-                    duration: 3000
-                })
-            } else {
-                ElNotification({
-                    title: '温馨提示',
-                    message: data.msg,
+                    title: '登录超时',
+                    message: "请求服务器超时",
                     type: "error",
                     duration: 3000
                 });
-                loading.value = false
+                loading.value = false; // 确保在发生错误时关闭加载状态  
             }
         } else {
             console.log('error submit!')

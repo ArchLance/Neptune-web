@@ -29,8 +29,10 @@
 <script setup lang="ts">
 import Hamburger from './Hamburger.vue';
 import { useUserStore } from '@/store/models/user'
+import { useRouter } from 'vue-router'
 const userStore = useUserStore();
-function handleCommand(command: any) {
+const router = useRouter()
+async function handleCommand(command: any) {
     console.log(`Selected command: ${command}`);
     switch (command) {
         case 'profile':
@@ -42,8 +44,11 @@ function handleCommand(command: any) {
             alert('Navigate to settings page')
             break;
         case 'logout':
-            console.log('Logout user');
-            alert('Logout user')
+            console.log("Logout")
+            userStore.loginOut();
+            await router.push({
+                path: '/login',
+            });
             break;
         default:
             console.log('Unknown command');

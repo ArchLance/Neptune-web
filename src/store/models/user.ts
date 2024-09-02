@@ -20,12 +20,24 @@ export const useUserStore = defineStore('userState', () => {
     function setRoles(newRoles: any) {
         roles.value = newRoles
     }
+    function loginOut() {
+        token.value = ''
+        userInfo.value = {
+            userid: '',
+            username: '',
+            account: '',
+            email: '',
+            role: ''
+        }
+        roles.value = []
+    }
     return {
         token,
         userInfo,
         roles,
         setToken,
         setUserInfo,
-        setRoles
+        setRoles,
+        loginOut
     }
 }, { persist: true })

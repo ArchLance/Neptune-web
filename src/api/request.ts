@@ -1,7 +1,7 @@
 import axios from 'axios'
 const service = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_API,
-    timeout: 1000,
+    timeout: 5000,
     // 跨域时候允许携带凭证
     withCredentials: true
 })
