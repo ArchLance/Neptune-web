@@ -16,7 +16,6 @@
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item command="profile">个人信息</el-dropdown-item>
-                        <el-dropdown-item command="settings">更改设置</el-dropdown-item>
                         <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
@@ -36,12 +35,9 @@ async function handleCommand(command: any) {
     console.log(`Selected command: ${command}`);
     switch (command) {
         case 'profile':
-            console.log('profile');
-            alert('profile')
-            break;
-        case 'settings':
-            console.log('Navigate to settings page');
-            alert('Navigate to settings page')
+            await router.push({
+                path: '/setting',
+            });
             break;
         case 'logout':
             console.log("Logout")

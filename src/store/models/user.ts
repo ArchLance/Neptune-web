@@ -8,7 +8,8 @@ export const useUserStore = defineStore('userState', () => {
         username: '',
         account: '',
         email: '',
-        role: ''
+        role: '',
+        avatar: ''
     })
     const roles = ref([])
     function setToken(newToken: string) {
@@ -19,6 +20,9 @@ export const useUserStore = defineStore('userState', () => {
     }
     function setRoles(newRoles: any) {
         roles.value = newRoles
+    }
+    function setAvatar(path: any) {
+        userInfo.value.avatar = path
     }
     function loginOut() {
         token.value = ''
@@ -38,6 +42,7 @@ export const useUserStore = defineStore('userState', () => {
         setToken,
         setUserInfo,
         setRoles,
+        setAvatar,
         loginOut
     }
 }, { persist: true })

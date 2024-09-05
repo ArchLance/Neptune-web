@@ -1,7 +1,7 @@
 import request from '../request'
 export function loginApi(data: object) {
     return request({
-        url: 'user/login',
+        url: 'api/user/login',
         method: 'post',
         data
     })
@@ -10,6 +10,6 @@ export function loginApi(data: object) {
 // 退出系统
 export function loginOutApi() {
     return request({
-        url: 'loginOut'
+        url: 'api/loginOut'
     })
 }

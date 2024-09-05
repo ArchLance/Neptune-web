@@ -16,6 +16,24 @@ export const staticRoutes = [
         isMenu: false
     },
     {
+        path: '/setting',
+        name: 'Setting',
+        component: () => import('@/views/layout/Layout.vue'),
+        redirect: '/setting/profile',
+        isMenu: false,
+        funcNode: 1,
+        children: [
+            {
+                path: 'profile',
+                name: 'Profile',
+                component: () => import('@/views/layout/topbar/setting/PersonalSetting.vue'),
+                meta: {
+                    title: '个人中心',
+                }
+            }
+        ]
+    },
+    {
         path: '/index',
         name: 'Index',
         component: () => import('@/views/layout/Layout.vue'),
@@ -32,7 +50,6 @@ export const staticRoutes = [
                 affix: true
             }
         }]
-
     },
     {
         path: '/tool',

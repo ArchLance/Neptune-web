@@ -5,4 +5,4 @@ const service = axios.create({
     // 跨域时候允许携带凭证
     withCredentials: true
 })
-export default service
+export default service 

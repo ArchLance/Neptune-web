@@ -59,7 +59,6 @@ const showPwd = () => {
 }
 
 const userStore = useUserStore()
-// TODO: 应该把用户数据加到localstorage中
 const submitForm = (formEl: FormInstance | undefined) => {
     console.log("提交表单")
     if (!formEl) return
@@ -78,7 +77,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
                         username: data.data.username,
                         account: data.data.account,
                         email: data.data.email,
-                        role: data.data.role
+                        role: data.data.role,
+                        avatar: data.data.avatar
                     })
                     await router.push({
                         path: '/index',

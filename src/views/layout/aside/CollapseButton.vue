@@ -21,11 +21,11 @@ const isCollapse = computed(() => SettingStore.isCollapse)
 <style scoped>
 .collapse-icon {
     position: absolute;
+    /* 控制当前元素在父元素中的位置 */
     top: 50%;
-    /* left: 0; */
     transform: translateY(-50%);
     width: 100%;
-    /* height: 100%; */
+    /* 控制子元素的位置 */
     display: flex;
     justify-content: center;
     align-items: center;
