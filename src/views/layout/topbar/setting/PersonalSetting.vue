@@ -42,7 +42,8 @@
               <el-col :span="3">
                 <el-form-item>
                   <!-- <el-button :loading="loading" plain color="#2fa7b9"  style="margin-left: 50px;" @click="onBasicSubmit(basicFormRef)"> -->
-                  <el-button :loading="loading" plain color="#2fa7b9" style="margin-left: 50px;">
+                  <el-button :loading="loading" plain color="#2fa7b9" style="margin-left: 50px;"
+                    @click="onBasicSubmit(basicFormRef)">
                     提交
                   </el-button>
                 </el-form-item>
@@ -76,6 +77,7 @@ import type { FormInstance } from 'element-plus'
 import BindEmail from './BindEmail.vue'
 import UpdatePwd from "./UpdatePwd.vue"
 import UserInfo from "./UserInfo.vue"
+import { updateInfoApi } from '@/api/user/user'
 const loading = ref(false)
 const basicFormRef = ref<FormInstance>()
 const userStore = useUserStore()
@@ -87,6 +89,7 @@ const userId = computed(() => {
 const state = reactive({
   // 基本信息
   basic: {
+    userid: '',
     username: '',
     account: '',
     avatar: '',
@@ -100,71 +103,72 @@ const headers = reactive({
 // 校验基础信息
 const basicRules = reactive({
   userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-  account: [{ required: true, message: "请输入性别", trigger: "blur" }],
-  userIcon: [{ required: true, message: "请上传头像", trigger: "blur" }],
+  account: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  avatar: [{ required: true, message: "请上传头像", trigger: "blur" }],
 })
 // 图片上传到服务器的路径
 const baseURL = import.meta.env.VITE_APP_BASE_API
 const uploadURL = "api/user/avatar"
-const avatarSrc = "static/upload/avatar/"
+const avatarSrc = import.meta.env.VITE_APP_USER_BASE_AVATAR
 const avatar = computed(() => {
   return baseURL + avatarSrc + basic.value.avatar
 })// 图片上传成功后执行的函数
-const handleAvatarSuccess = (res) => {
+const handleAvatarSuccess = (res: any) => {
   console.log(res)
   if (res.code === 0) {
     console.log("handleAvatarSuccess:", res)
     state.basic.avatar = res.data.path
-    userStore.setAvatar(res.data.path)
   }
 }
 
 // 提交基础信息
 
-// const onBasicSubmit = (formEl: FormInstance | undefined) => {
-//   if (!formEl) return
-//   formEl.validate(async(valid) => {
-//     if (valid) {
-//       loading.value = true
-//       // 登录
-//       const { data } = await updateInfoApi({ ...state.basic });
-//       if(data.status===200){
-//         // 设置token
-//         userStore.setUserInfo({
-//           realname: state.basic.realname,
-//           sex: state.basic.sex,
-//           userIcon: state.basic.userIcon
-//         })
-//         // 提示
-//         ElMessage({
-//           message: '基础信息修改成功~',
-//           type: 'success',
-//         })
-//         loading.value = false
-//       }else {
-//         // 提示
-//         ElMessage({
-//           message: '基础信息修改失败~',
-//           type: 'error',
-//         })
-//         loading.value = false
-//       }
-//     } else {
-//       console.log('error submit!')
-//       return false
-//     }
-//   })
-// }
+const onBasicSubmit = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate(async (valid) => {
+    if (valid) {
+      loading.value = true
+      // 登录
+      const { data } = await updateInfoApi({ ...state.basic }, headers.Authorization);
+      if (data.code === 0) {
+        userStore.setUserInfo({
+          userid: state.basic.userid,
+          username: state.basic.username,
+          account: state.basic.account,
+          email: state.basic.email,
+          role: state.basic.role,
+          avatar: state.basic.avatar
+        })
+        // 提示
+        ElMessage({
+          message: '基础信息修改成功~',
+          type: 'success',
+        })
+        loading.value = false
+      } else {
+        // 提示
+        ElMessage({
+          message: '基础信息修改失败~',
+          type: 'error',
+        })
+        loading.value = false
+      }
+    } else {
+      console.log('error submit!')
+      return Promise.resolve()
+    }
+  })
+}
 const { userInfo } = userStore
 //挂载后加载数据
 onMounted(() => {
   headers.Authorization = userStore.token
+  state.basic.userid = userInfo.userid
   state.basic.username = userInfo.username
   state.basic.account = userInfo.account
   state.basic.avatar = userInfo.avatar
   state.basic.email = userInfo.email
   state.basic.role = userInfo.role
-  console.log(state.basic)
 })
 // 它主要用于在setup函数中创建响应式的引用，这些引用与原始响应式对象保持同步
 // 但允许你在模板或计算属性中解构它们而不会丢失响应性。
@@ -201,5 +205,12 @@ const { basic } = toRefs(state)
 .left_box .set h4 {
   line-height: 45px;
   color: #8f8f8f;
+}
+
+.avatar-uploader {
+  width: 100%;
+  height: auto;
+  background: white;
+  margin-top: -10px;
 }
 </style>

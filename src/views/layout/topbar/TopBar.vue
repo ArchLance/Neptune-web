@@ -8,7 +8,7 @@
         <div class="topright">
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <el-avatar :size=34 src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                    <el-avatar :size=34 :src="baseURL + avatarSrc + userStore.userInfo.avatar" />
                     <!-- 得用import才能让其识别出相对路径 -->
                     <!-- <el-avatar :size=34 src="@/assets/logo.png" /> -->
                     {{ userStore.userInfo.username }}
@@ -31,6 +31,8 @@ import { useUserStore } from '@/store/models/user'
 import { useRouter } from 'vue-router'
 const userStore = useUserStore();
 const router = useRouter()
+const baseURL = import.meta.env.VITE_APP_BASE_API
+const avatarSrc = import.meta.env.VITE_APP_USER_BASE_AVATAR
 async function handleCommand(command: any) {
     console.log(`Selected command: ${command}`);
     switch (command) {

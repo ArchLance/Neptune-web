@@ -11,8 +11,8 @@
         <div class="right_photo">
           <!-- 用户没设置头像的情况下使用系统默认的 -->
 
-          <img v-if="userInfo.avatar" :src="avatar" style="width: 50px;border-radius: 50px;" />
-          <img v-else src="@/assets/default_avatar.png" style="width: 50px;border-radius: 50px;" />
+          <img v-if="userInfo.avatar" :src="avatar" style="width: 130px;height: auto;" />
+          <img v-else src="@/assets/default_avatar.png" style="width: 130px;height: auto;" />
         </div>
         <h2>{{ userInfo.username }}</h2>
         <br>
@@ -40,16 +40,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, toRefs } from 'vue'
 import { useUserStore } from '@/store/models/user'
 //   import {calculateDays} from "../../../utils/date";
-const { userInfo } = useUserStore()
+const { userInfo } = toRefs(useUserStore())
 // 服务器路径
 const baseURL = import.meta.env.VITE_APP_BASE_API
-const avatarSrc = "static/upload/avatar/"
+const avatarSrc = import.meta.env.VITE_APP_USER_BASE_AVATAR
 
 const avatar = computed(() => {
-  return baseURL + avatarSrc + userInfo.avatar
+  return baseURL + avatarSrc + userInfo.value.avatar
 })
 
 </script>
@@ -69,7 +69,7 @@ const avatar = computed(() => {
   text-align: center;
   height: 100px;
   width: 100px;
-  margin-left: -50px;
+  margin-left: -65px;
   left: 50%;
 }
 

@@ -31,7 +31,8 @@ export const useUserStore = defineStore('userState', () => {
             username: '',
             account: '',
             email: '',
-            role: ''
+            role: '',
+            avatar: '',
         }
         roles.value = []
     }
