@@ -41,7 +41,6 @@
               </el-col>
               <el-col :span="3">
                 <el-form-item>
-                  <!-- <el-button :loading="loading" plain color="#2fa7b9"  style="margin-left: 50px;" @click="onBasicSubmit(basicFormRef)"> -->
                   <el-button :loading="loading" plain color="#2fa7b9" style="margin-left: 50px;"
                     @click="onBasicSubmit(basicFormRef)">
                     提交
@@ -129,29 +128,35 @@ const onBasicSubmit = (formEl: FormInstance | undefined) => {
     if (valid) {
       loading.value = true
       // 登录
-      const { data } = await updateInfoApi({ ...state.basic }, headers.Authorization);
-      if (data.code === 0) {
-        userStore.setUserInfo({
-          userid: state.basic.userid,
-          username: state.basic.username,
-          account: state.basic.account,
-          email: state.basic.email,
-          role: state.basic.role,
-          avatar: state.basic.avatar
-        })
-        // 提示
-        ElMessage({
-          message: '基础信息修改成功~',
-          type: 'success',
-        })
-        loading.value = false
-      } else {
-        // 提示
-        ElMessage({
-          message: '基础信息修改失败~',
-          type: 'error',
-        })
-        loading.value = false
+      try {
+        const { data } = await updateInfoApi({ ...state.basic }, headers.Authorization);
+        if (data.code === 0) {
+          userStore.setUserInfo({
+            userid: state.basic.userid,
+            username: state.basic.username,
+            account: state.basic.account,
+            email: state.basic.email,
+            role: state.basic.role,
+            avatar: state.basic.avatar
+          })
+          // 提示
+          ElMessage({
+            message: '基础信息修改成功~',
+            type: 'success',
+          })
+          loading.value = false
+        } else {
+          // 提示
+          ElMessage({
+            message: '基础信息修改失败~',
+            type: 'error',
+          })
+          loading.value = false
+        }
+      } catch (error) {
+        // 捕获loginApi中抛出的任何错误，包括超时  
+        ElMessage.error('请求服务器超时')
+        loading.value = false; // 确保在发生错误时关闭加载状态  
       }
     } else {
       console.log('error submit!')
