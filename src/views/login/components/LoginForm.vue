@@ -11,17 +11,20 @@
         </el-form-item>
 
         <el-form-item label="" prop="password">
-            <el-input placeholder="请输入密码" autoComplete="on" v-model="ruleForm.password" :type="passwordType">
+            <el-input placeholder="请输入密码" autoComplete="on" show-password v-model="ruleForm.password"
+                :type="passwordType" @keydown.enter="submitForm(ruleFormRef)">
                 <template #prefix>
                     <el-icon class="el-input__icon">
                         <GoodsFilled />
                     </el-icon>
                 </template>
-                <template #suffix>
+                <!-- 可以用show-password -->
+                <!-- 手动实现眼睛密码图标 -->
+                <!-- <template #suffix>
                     <div class="show-pwd" @click="showPwd">
                         <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
                     </div>
-                </template>
+                </template> -->
             </el-input>
         </el-form-item>
 
@@ -40,6 +43,7 @@ import { ElNotification } from "element-plus";
 import { useRouter } from 'vue-router'
 import { loginApi } from '../../../api/login/login'
 import { useUserStore } from '../../../store/models/user'
+
 const router = useRouter()
 const ruleFormRef = ref<FormInstance>()
 const passwordType = ref('password')
@@ -54,9 +58,9 @@ const ruleForm = reactive({
     password: '123456',
 })
 // 显示密码图标
-const showPwd = () => {
-    passwordType.value = passwordType.value === 'password' ? '' : 'password'
-}
+// const showPwd = () => {
+//     passwordType.value = passwordType.value === 'password' ? '' : 'password'
+// }
 
 const userStore = useUserStore()
 const submitForm = (formEl: FormInstance | undefined) => {
@@ -116,7 +120,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
             return Promise.resolve()
         }
     })
-
 }
 </script>
 <style scoped>
