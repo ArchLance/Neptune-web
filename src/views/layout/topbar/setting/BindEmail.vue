@@ -68,7 +68,7 @@
   </template>
   
   <script setup lang="ts">
-  import {ref,reactive,toRefs } from 'vue'
+  import {ref,reactive } from 'vue'
   import { useUserStore } from '@/store/models/user'
   import { ElMessage } from 'element-plus'
   import { sendEmailApi, verifyCodeApi, updateEmailApi } from '@/api/user/user'

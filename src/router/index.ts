@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from '@/config/nprogress'
 import { useUserStore } from '@/store/models/user'
 import { useMenuStore } from '@/store/models/menu'
-import component from 'element-plus/es/components/tree-select/src/tree-select-option.mjs'
 export const staticRoutes = [
     {
         path: '/',
