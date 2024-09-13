@@ -8,7 +8,8 @@
         <div class="topright">
             <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <el-avatar :size=34 :src="baseURL + avatarSrc + userStore.userInfo.avatar" />
+                    <img v-if="userInfo.avatar" :src="avatar" style="width: 30px;height: auto;" />
+                    <img v-else src="@/assets/default_avatar.png" style="width: 30px;height: auto;" />
                     <!-- 得用import才能让其识别出相对路径 -->
                     <!-- <el-avatar :size=34 src="@/assets/logo.png" /> -->
                     {{ userStore.userInfo.username }}
@@ -27,12 +28,19 @@
 
 <script setup lang="ts">
 import Hamburger from './Hamburger.vue';
+import { computed, toRefs } from 'vue'
 import { useUserStore } from '@/store/models/user'
 import { useRouter } from 'vue-router'
 const userStore = useUserStore();
 const router = useRouter()
+const { userInfo } = toRefs(useUserStore())
+// 服务器路径
 const baseURL = import.meta.env.VITE_APP_BASE_API
 const avatarSrc = import.meta.env.VITE_APP_USER_BASE_AVATAR
+
+const avatar = computed(() => {
+    return baseURL + avatarSrc + userInfo.value.avatar
+})
 async function handleCommand(command: any) {
     console.log(`Selected command: ${command}`);
     switch (command) {

@@ -50,7 +50,6 @@ import { updatePwdApi } from "@/api/user/user";
 import { useRouter } from 'vue-router'
 // 定义表单对象
 const modifyPwd = ref({
-  account: userStore.userInfo.account,
   old_password: "",
   new_password: ""
 })

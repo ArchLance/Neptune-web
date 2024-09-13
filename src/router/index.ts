@@ -141,52 +141,52 @@ const router = createRouter({
  * */
 router.beforeEach(async (to, from, next) => {
     // 启动进度条
-    // NProgress.start()
-    const menuStore = useMenuStore()
-    menuStore.generateRoutes([])
-    return next()
-    // // 如果是登录页面则直接放行
-    // if (to.path === '/login') return next()
-
-    // const userStore = useUserStore()
-    // if (!userStore.token) {
-    //     // 如果没有token则跳转到登录页面，并且在登陆成功后重新跳转到指定页面
-    //     return next({ path: `/login?redirect=${to.path}`, replace: true })、
-    // }
-    // if (userStore.token && to.path === '/login') {
-    //     // 如果有token则直接跳转到首页
-    //     return next({ path: '/' })
-    // }
-    // const { userInfo } = userStore
-    // const roles: string[] = []
-    // roles.push(userInfo.role)
-
+    NProgress.start()
     // const menuStore = useMenuStore()
-    // if (menuStore.routes.length === 0) {
-    //     // 如果没有菜单则重新获取菜单
-    //     const filterRoutes = menuStore.generateRoutes(roles)
-    //     // 动态添加路由访问表
-    //     filterRoutes.forEach((route: any) => {
-    //         router.addRoute(route)
-    //     })
-    //     // 跳转到指定页面
-    //     return next({ ...to, replace: true })
-    // } else {
-    //     return next()
-    // }
+    // menuStore.generateRoutes([])
+    // return next()
+    // 如果是登录页面则直接放行
+    if (to.path === '/login') return next()
+
+    const userStore = useUserStore()
+    if (!userStore.token) {
+        // 如果没有token则跳转到登录页面，并且在登陆成功后重新跳转到指定页面
+        return next({ path: `/login?redirect=${to.path}`, replace: true })
+    }
+    if (userStore.token && to.path === '/login') {
+        // 如果有token则直接跳转到首页
+        return next({ path: '/' })
+    }
+    const { userInfo } = userStore
+    const roles: string[] = []
+    roles.push(userInfo.role)
+
+    const menuStore = useMenuStore()
+    if (menuStore.Routes.length === 0) {
+        // 如果没有菜单则重新获取菜单
+        const filterRoutes = menuStore.generateRoutes(roles)
+        // 动态添加路由访问表
+        filterRoutes.value.forEach((route: any) => {
+            router.addRoute(route)
+        })
+        // 跳转到指定页面
+        return next({ ...to, replace: true })
+    } else {
+        return next()
+    }
 })
 
 /**
  * @description 路由跳转结束
  * */
-// router.afterEach(() => {
-//     NProgress.done()
-// })
+router.afterEach(() => {
+    NProgress.done()
+})
 /**
  * @description 路由跳转错误
  * */
-// router.onError((error) => {
-//     NProgress.done()
-//     console.log(error)
-// })
+router.onError((error) => {
+    NProgress.done()
+    console.log(error)
+})
 export default router

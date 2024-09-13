@@ -115,7 +115,7 @@ const avatar = computed(() => {
 const handleAvatarSuccess = (res: any) => {
   console.log(res)
   if (res.code === 0) {
-    console.log("handleAvatarSuccess:", res)
+    //console.log("handleAvatarSuccess:", res)
     state.basic.avatar = res.data.path
   }
 }
