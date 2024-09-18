@@ -22,23 +22,23 @@ export function updatePwdApi(data: object, token: string) {
     })
 }
 
-export function sendEmailApi(email: string, token: string) {
+export function sendEmailApi(email: string, type: number, token: string) {
     return request({
         url: 'api/user/sendEmail',
-        params: {
-            email
-        },
         method: 'get',
+        params: {
+            email,
+            type,
+        },
         headers: {
             Authorization: token
         }
     })
 }
-export function verifyCodeApi(email: string, code: string, token: string) {
+export function verifyCodeApi(code: string, token: string) {
     return request({
         url: 'api/user/verifyCode',
         params: {
-            email,
             code
         },
         method: 'get',
@@ -51,7 +51,7 @@ export function verifyCodeApi(email: string, code: string, token: string) {
 export function updateEmailApi(email: string, code: string, token: string) {
     return request({
         url: 'api/user/updateEmail',
-        params: {
+        data: {
             email,
             code
         },
