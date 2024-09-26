@@ -74,9 +74,9 @@ export const staticRoutes = [
             {
                 path: 'email',
                 name: 'Email',
-                component: () => import('@/views/tool/Email.vue'),
+                component: () => import('@/views/tool/POCManager.vue'),
                 meta: {
-                    title: '邮件测试',
+                    title: 'POC管理',
                     icon: 'Message'
                 }
             },

@@ -70,7 +70,7 @@ async function handleCommand(command: any) {
     height: 100%;
     right: 20px;
     box-shadow: rgb(0 0 0 / 10%) 0px 0px 10px;
-    background: white;
+    background: rgb(255, 255, 255);
 }
 
 .topleft {

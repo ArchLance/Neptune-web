@@ -40,10 +40,11 @@ import TopBar from '@/views/layout/topbar/TopBar.vue';
     --el-header-padding: 0px;
     --el-header-height: auto;
     height: 50px;
-    background: #F3F3F3;
+    background: #f3f3f3;
 }
 
 .el-main {
+    padding: 0px;
     background: #F3F3F3;
 }
 
