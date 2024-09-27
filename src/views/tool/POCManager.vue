@@ -2,15 +2,6 @@
     <div class="poc-container">
         <div class="poc-form">
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item label="每页条数">
-                    <el-select v-model="formInline.limit" placeholder="每页条数" style="width: 100px">
-                        <el-option label="10" value=10 />
-                        <el-option label="20" value=20 />
-                        <el-option label="30" value=30 />
-                        <el-option label="40" value=40 />
-                        <el-option label="50" value=50 />
-                    </el-select>
-                </el-form-item>
                 <el-form-item label="应用名称">
                     <el-input v-model="formInline.app_name" placeholder="应用名称" clearable />
                 </el-form-item>
@@ -20,11 +11,15 @@
                 <el-form-item label="漏洞类型">
                     <el-select v-model="formInline.vulnerability_type" multiple collapse-tags collapse-tags-tooltip
                         :max-collapse-tags="4" placeholder="请选择漏洞类型" style="width: 700px">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                        <el-option v-for="item in options.slice(1)" :key="item.value" :label="item.label"
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="success" @click="handleAdd">添加</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -43,7 +38,7 @@
                 </el-table-column>
                 <el-table-column prop="add_time" label="添加时间" align="center" />
                 <el-table-column label="操作" width="200" align="center">
-                    <template #default="">
+                    <template #default="scope">
                         <!-- <el-button size="small" @click="handleEdit(scope.$index, scope.row)"> -->
                         <el-button size="small">
                             详细
@@ -52,12 +47,21 @@
                             修改
                         </el-button>
                         <!-- <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)"> -->
-                        <el-button size="small" type="danger">
-                            删除
-                        </el-button>
+                        <el-popconfirm confirm-button-text="是" cancel-button-text="否" icon-color="#626AEF"
+                            title="是否确认删除" @confirm="handleDelete(scope.$index)">
+                            <template #reference>
+                                <el-button size="small" type="danger">删除</el-button>
+                            </template>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
+        </div>
+        <div class="demo-pagination-block">
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="formInline.limit"
+                :page-sizes="[10, 20, 30, 40, 50]" :size="size" :background="false"
+                layout="sizes, prev, pager, next, jumper" :total="count" @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
         </div>
     </div>
 </template>
@@ -65,6 +69,12 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
 import type { TableInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import { filterPocApi, deletePocApi } from '@/api/poc/poc'
+import { onMounted } from 'vue'
+import type { ComponentSize } from 'element-plus'
+const size = ref<ComponentSize>('default')
+const currentPage = ref(1)
 const indexMethod = (index: number) => {
     return index + 1
 }
@@ -155,20 +165,61 @@ interface Poc {
     add_time: string
     poc_content: string
 }
-const tableData: Poc[] = [
-    {
-        id: 1,
-        vulnerability_name: 'CVE11111',
-        poc_name: 'Tom',
-        app_name: 'No. 189, Grove St, Los Angeles',
-        vulnerability_type: 12,
-        add_time: "2016-05-03",
-        poc_content: "",
-    },
-]
-const onSubmit = () => {
-    console.log('submit!')
+
+const tableData = ref<Poc[]>([])
+const count = ref(0)
+// 分页逻辑
+const onSubmit = async () => {
+    try {
+        const { data } = await filterPocApi(formInline)
+        if (data.code === 0) {
+            data.data.pocs.forEach((item: Poc) => {
+                tableData.value.push(item)
+            })
+            count.value = data.data.count
+        } else {
+            ElMessage.error(data.msg)
+        }
+    } catch (error) {
+        console.log(error)
+        ElMessage.error('请求服务器超时')
+    }
 }
+const handleDelete = async (index: number) => {
+    try {
+        const { data } = await deletePocApi(tableData.value[index].id)
+        if (data.code === 0) {
+            tableData.value.splice(index, 1)
+            ElMessage.success("删除成功")
+            count.value = count.value - 1
+        } else {
+            ElMessage.error(data.msg)
+        }
+    } catch (error) {
+        console.log(error)
+        ElMessage.error('请求服务器超时')
+    }
+}
+const handleSizeChange = (val: number) => {
+    console.log(`${val} items per page`)
+    formInline.limit = val
+    tableData.value = []
+    onSubmit()
+}
+const handleCurrentChange = (val: number) => {
+    console.log(`current page: ${val}`)
+    formInline.offset = (val - 1) * formInline.limit
+    tableData.value = []
+    onSubmit()
+}
+const handleAdd = () => {
+    console.log('add')
+}
+// TODO: 还有添加，更新，查看没写
+
+onMounted(() => {
+    onSubmit()
+})
 </script>
 
 <style>
@@ -201,5 +252,11 @@ const onSubmit = () => {
 .poc-table {
     margin: 10px;
     border: 1px solid #ededed;
+}
+
+.demo-pagination-block {
+    display: flex;
+    justify-content: right;
+    margin: 10px;
 }
 </style>

@@ -1,28 +1,22 @@
 import request from '../request'
 
-export function updateInfoApi(data: object, token: string) {
+export function updateInfoApi(data: object) {
     return request({
         url: 'api/user/update',
         data,
         method: 'put',
-        headers: {
-            Authorization: token
-        }
     })
 }
 
-export function updatePwdApi(data: object, token: string) {
+export function updatePwdApi(data: object) {
     return request({
         url: 'api/user/changePassword',
         data,
         method: 'put',
-        headers: {
-            Authorization: token
-        }
     })
 }
 
-export function sendEmailApi(email: string, type: number, token: string) {
+export function sendEmailApi(email: string, type: number) {
     return request({
         url: 'api/user/sendEmail',
         method: 'get',
@@ -30,25 +24,19 @@ export function sendEmailApi(email: string, type: number, token: string) {
             email,
             type,
         },
-        headers: {
-            Authorization: token
-        }
     })
 }
-export function verifyCodeApi(code: string, token: string) {
+export function verifyCodeApi(code: string,) {
     return request({
         url: 'api/user/verifyCode',
         params: {
             code
         },
         method: 'get',
-        headers: {
-            Authorization: token
-        }
     })
 }
 
-export function updateEmailApi(email: string, code: string, token: string) {
+export function updateEmailApi(email: string, code: string,) {
     return request({
         url: 'api/user/updateEmail',
         data: {
@@ -56,8 +44,5 @@ export function updateEmailApi(email: string, code: string, token: string) {
             code
         },
         method: 'put',
-        headers: {
-            Authorization: token
-        }
     })
 }

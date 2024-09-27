@@ -72,7 +72,7 @@
 import { ref, reactive, toRefs, onMounted, computed } from 'vue'
 import { useUserStore } from '@/store/models/user'
 import { ElMessage } from 'element-plus'
-import type { FormInstance } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import BindEmail from './BindEmail.vue'
 import UpdatePwd from "./UpdatePwd.vue"
 import UserInfo from "./UserInfo.vue"
@@ -85,6 +85,14 @@ const userId = computed(() => {
     userId: userStore.userInfo.userid
   }
 })
+interface RuleForm {
+  userid: string
+  username: string
+  account: string
+  avatar: string
+  email: string
+  role: string
+}
 const state = reactive({
   // 基本信息
   basic: {
@@ -100,10 +108,9 @@ const headers = reactive({
   Authorization: ''
 })
 // 校验基础信息
-const basicRules = reactive({
-  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+const basicRules = reactive<FormRules<RuleForm>>({
+  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   account: [{ required: true, message: "请输入账号", trigger: "blur" }],
-  avatar: [{ required: true, message: "请上传头像", trigger: "blur" }],
 })
 // 图片上传到服务器的路径
 const baseURL = import.meta.env.VITE_APP_BASE_API
@@ -129,7 +136,7 @@ const onBasicSubmit = (formEl: FormInstance | undefined) => {
       loading.value = true
       // 登录
       try {
-        const { data } = await updateInfoApi({ ...state.basic }, headers.Authorization);
+        const { data } = await updateInfoApi({ ...state.basic });
         if (data.code === 0) {
           userStore.setUserInfo({
             userid: state.basic.userid,

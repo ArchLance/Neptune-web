@@ -69,7 +69,7 @@ const modifySubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate(async (valid) => {
       subLoading.value = true
       if (valid) {
-        const { data } = await updatePwdApi(modifyPwd.value, userStore.token)
+        const { data } = await updatePwdApi(modifyPwd.value)
         console.log(data)
         if (data.code === 0) {
           ElMessage.success(data.msg)

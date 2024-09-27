@@ -104,7 +104,7 @@ const getCode = async (type: number) => {
     }, 1000)
   }
   try {
-    const { data } = await sendEmailApi(state.toBind.email, type, userStore.token)
+    const { data } = await sendEmailApi(state.toBind.email, type)
     if (data.code === 0) {
       // 提示
       ElMessage({
@@ -130,7 +130,7 @@ const confirmCode = async () => {
 
   if (state.toBind.code != '') {
     // 验证用户输入的验证码是否正确
-    const { data } = await verifyCodeApi(state.toBind.code, userStore.token)
+    const { data } = await verifyCodeApi(state.toBind.code)
     if (data.code === 0) {
       // 显示新邮箱的输入框
       showNewEmail.value = true
@@ -160,7 +160,7 @@ const toBindSubmit = async () => {
     window.clearInterval(timer.value);
     timer.value = null;
     codeText.value = "获取验证码";
-    const { data } = await updateEmailApi(state.toBind.email, state.toBind.code2, userStore.token)
+    const { data } = await updateEmailApi(state.toBind.email, state.toBind.code2)
     if (data.code === 0) {
       // 提示
       userStore.userInfo.email = state.toBind.email
