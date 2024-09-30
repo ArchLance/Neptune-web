@@ -40,7 +40,7 @@
                 <el-table-column label="操作" width="200" align="center">
                     <template #default="scope">
                         <!-- <el-button size="small" @click="handleEdit(scope.$index, scope.row)"> -->
-                        <el-button size="small">
+                        <el-button size="small" @click="handleDetail(scope.$index)">
                             详细
                         </el-button>
                         <el-button size="small" type="primary">
@@ -56,6 +56,14 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div>
+                <el-dialog title="POC内容" v-model="dialogVisible" width="50%" :before-close="handleClose">
+                    <pre><code v-html="highlightedYaml"></code></pre>
+                    <span class="dialog-footer">
+                        <el-button @click="handleClose">关闭</el-button>
+                    </span>
+                </el-dialog>
+            </div>
         </div>
         <div class="demo-pagination-block">
             <el-pagination v-model:current-page="currentPage" v-model:page-size="formInline.limit"
@@ -67,12 +75,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import type { TableInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { filterPocApi, deletePocApi } from '@/api/poc/poc'
 import { onMounted } from 'vue'
 import type { ComponentSize } from 'element-plus'
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css'
+import yaml from 'highlight.js/lib/languages/yaml';
+hljs.registerLanguage('yaml', yaml);
 const size = ref<ComponentSize>('default')
 const currentPage = ref(1)
 const indexMethod = (index: number) => {
@@ -215,8 +227,21 @@ const handleCurrentChange = (val: number) => {
 const handleAdd = () => {
     console.log('add')
 }
-// TODO: 还有添加，更新，查看没写
+// TODO: 还有添加，更新没写
+const dialogVisible = ref(false)
+const nowIndex = ref(0)
 
+const handleDetail = (val: number) => {
+    nowIndex.value = val
+    dialogVisible.value = true
+}
+const handleClose = () => {
+    nowIndex.value = 0
+    dialogVisible.value = false
+}
+const highlightedYaml = computed(() => {
+    return hljs.highlight(tableData.value[nowIndex.value].poc_content, { language: 'yaml' }).value
+})
 onMounted(() => {
     onSubmit()
 })
@@ -249,6 +274,13 @@ onMounted(() => {
     padding: 18px 15px 0 15px;
 }
 
+pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
 .poc-table {
     margin: 10px;
     border: 1px solid #ededed;
@@ -258,5 +290,12 @@ onMounted(() => {
     display: flex;
     justify-content: right;
     margin: 10px;
+}
+
+.dialog-footer {
+    /* 按钮居中显示 */
+    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 </style>
