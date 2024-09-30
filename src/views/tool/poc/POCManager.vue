@@ -16,7 +16,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit">查询</el-button>
+                    <el-button type="primary" @click="onSearch">查询</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" @click="handleAdd">添加</el-button>
@@ -43,7 +43,7 @@
                         <el-button size="small" @click="handleDetail(scope.$index)">
                             详细
                         </el-button>
-                        <el-button size="small" type="primary">
+                        <el-button size="small" type="primary" @click="handleUpdate(scope.$index)">
                             修改
                         </el-button>
                         <!-- <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)"> -->
@@ -56,8 +56,10 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- 详情弹窗  -->
             <div>
-                <el-dialog title="POC内容" v-model="dialogVisible" width="50%" :before-close="handleClose">
+                <el-dialog title="POC内容" v-model="detailVisible" width="50%" :before-close="handleClose">
+                    <!-- TODO: v-html会出现XSS攻击问题 -->
                     <pre><code v-html="highlightedYaml"></code></pre>
                     <span class="dialog-footer">
                         <el-button @click="handleClose">关闭</el-button>
@@ -71,6 +73,17 @@
                 layout="sizes, prev, pager, next, jumper" :total="count" @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" />
         </div>
+        <el-dialog align-center v-model="addPocDialogFormVisible" width="42%" destroy-on-close>
+            <!--添加学生组件 start-->
+            <AddPoc @closeAddPocForm="closeAddPocForm" @success="success" :options="options" />
+            <!--添加学生组件 end-->
+        </el-dialog>
+        <el-dialog align-center v-model="UpdatePocDialogFormVisible" width="42%" destroy-on-close>
+            <!--编辑学生组件 start-->
+            <UpdatePoc @closeUpdatePocForm="closeUpdatePocForm" @success="success" :options="options"
+                :nowItem="tableData[nowIndex]" />
+            <!--编辑学生组件 end-->
+        </el-dialog>
     </div>
 </template>
 
@@ -79,6 +92,8 @@ import { ref, reactive, computed } from 'vue'
 import type { TableInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { filterPocApi, deletePocApi } from '@/api/poc/poc'
+import AddPoc from './components/AddPoc.vue'
+import UpdatePoc from './components/UpdatePoc.vue'
 import { onMounted } from 'vue'
 import type { ComponentSize } from 'element-plus'
 import hljs from 'highlight.js';
@@ -181,7 +196,8 @@ interface Poc {
 const tableData = ref<Poc[]>([])
 const count = ref(0)
 // 分页逻辑
-const onSubmit = async () => {
+const onSearch = async () => {
+    tableData.value = []
     try {
         const { data } = await filterPocApi(formInline)
         if (data.code === 0) {
@@ -216,34 +232,51 @@ const handleSizeChange = (val: number) => {
     console.log(`${val} items per page`)
     formInline.limit = val
     tableData.value = []
-    onSubmit()
+    onSearch()
 }
 const handleCurrentChange = (val: number) => {
     console.log(`current page: ${val}`)
     formInline.offset = (val - 1) * formInline.limit
     tableData.value = []
-    onSubmit()
+    onSearch()
 }
-const handleAdd = () => {
-    console.log('add')
-}
-// TODO: 还有添加，更新没写
-const dialogVisible = ref(false)
+
+const detailVisible = ref(false)
 const nowIndex = ref(0)
 
 const handleDetail = (val: number) => {
     nowIndex.value = val
-    dialogVisible.value = true
+    detailVisible.value = true
 }
 const handleClose = () => {
     nowIndex.value = 0
-    dialogVisible.value = false
+    detailVisible.value = false
 }
 const highlightedYaml = computed(() => {
     return hljs.highlight(tableData.value[nowIndex.value].poc_content, { language: 'yaml' }).value
 })
+const addPocDialogFormVisible = ref(false)
+const handleAdd = () => {
+    addPocDialogFormVisible.value = true
+}
+const closeAddPocForm = () => {
+    addPocDialogFormVisible.value = false
+}
+const success = () => {
+    addPocDialogFormVisible.value = false
+    UpdatePocDialogFormVisible.value = false
+    onSearch()
+}
+const UpdatePocDialogFormVisible = ref(false)
+const handleUpdate = (val: number) => {
+    nowIndex.value = val
+    UpdatePocDialogFormVisible.value = true
+}
+const closeUpdatePocForm = () => {
+    UpdatePocDialogFormVisible.value = false
+}
 onMounted(() => {
-    onSubmit()
+    onSearch()
 })
 </script>
 

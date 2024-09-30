@@ -72,9 +72,9 @@ export const staticRoutes = [
                 }
             },
             {
-                path: 'email',
-                name: 'Email',
-                component: () => import('@/views/tool/POCManager.vue'),
+                path: 'poc',
+                name: 'Poc',
+                component: () => import('@/views/tool/poc/POCManager.vue'),
                 meta: {
                     title: 'POC管理',
                     icon: 'Message'
