@@ -217,9 +217,8 @@ const handleDelete = async (index: number) => {
     try {
         const { data } = await deletePocApi(tableData.value[index].id)
         if (data.code === 0) {
-            tableData.value.splice(index, 1)
             ElMessage.success("删除成功")
-            count.value = count.value - 1
+            onSearch()
         } else {
             ElMessage.error(data.msg)
         }
