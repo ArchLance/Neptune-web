@@ -59,7 +59,7 @@
             <!-- 详情弹窗  -->
             <div>
                 <el-dialog title="POC内容" v-model="detailVisible" width="50%" :before-close="handleClose">
-                    <!-- TODO: v-html会出现XSS攻击问题 -->
+                    <!-- TODO: v-html会出现XSS攻击问题 可能得后端校验 -->
                     <pre><code v-html="highlightedYaml"></code></pre>
                     <span class="dialog-footer">
                         <el-button @click="handleClose">关闭</el-button>

@@ -25,9 +25,8 @@
                 </el-form-item>
             </el-col>
             <el-col :span="24">
-                <!-- TODO:将输入的content转化为json格式 -->
                 <el-form-item label="poc内容" prop="poc_content">
-                    <el-input v-model="formPoc.poc_content" :rows="2" type="textarea" placeholder="请输入poc内容" />
+                    <el-input v-model="formPoc.poc_content" :rows="20" type="textarea" placeholder="请输入poc内容" />
                 </el-form-item>
             </el-col>
         </el-row>
@@ -44,6 +43,7 @@ import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { updatePocApi } from '@/api/poc/poc'
+import yaml from 'js-yaml'
 const props = defineProps(['options', 'nowItem'])
 // 子给父 自定义事件
 const emits = defineEmits(['closeUpdatePocForm', 'success'])
@@ -65,6 +65,20 @@ const rules = reactive<FormRules>({
 })
 // 新增poc信息
 const updatePoc = async (formEl: FormInstance | undefined) => {
+    try {
+        // 尝试解析 YAML
+        const parsedYaml = yaml.load(formPoc.poc_content)
+        // 如果解析成功，重新格式化 YAML
+        formPoc.poc_content = yaml.dump(parsedYaml, {
+            indent: 2,
+            lineWidth: -1,
+            noRefs: true,
+            sortKeys: false
+        })
+    } catch (error) {
+        ElMessage.error('YAML 格式错误')
+        return
+    }
     if (!formEl) return
     await formEl.validate(async (valid, fields) => {
         subLoading.value = true
@@ -75,7 +89,7 @@ const updatePoc = async (formEl: FormInstance | undefined) => {
                     ElMessage.success(data.msg)
                     emits('success')
                 } else {
-                    ElMessage.error(data.message)
+                    ElMessage.error(data.msg)
                 }
             } catch (error) {
                 console.log(error)
